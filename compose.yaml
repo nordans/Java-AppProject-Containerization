@@ -1,0 +1,45 @@
+services:
+    vprodb:
+        build: 
+            context: ./DockerFiles/db
+        image: normandev/vprofiledb # <----- Change to your image repo or use my by. build: normandev/vprofiledb
+        container_name: vprodb
+        ports:
+            - "3306:3306"
+        volumes:
+            - vprodbdata:/var/lib/mysql
+        environment:
+            - MYSQL_ROOT_PASSWORD=vprodbpass
+    vprocache01:
+        image: memcached
+        container_name: vprocache01
+        ports:
+          - "11211:11211"
+    vprormq01:
+        image: rabbitmq
+        container_name: vprormq01
+        ports:
+          - "5672:5672"
+        environment:
+            - RABBITMQ_DEFAULT_USER=guest
+            - RABBITMQ_DEFAULT_PASS=guest
+    vproapp:
+        build:
+            context: ./DockerFiles/app
+        image: normandev/vprofileapp # <----- Change to your image repo or use my by. build: normandev/vprofiledb
+        container_name: vproapp
+        ports:
+          - "8080:8080"
+        volumes:
+          - vproappdata:/usr/local/tomcat/webapps
+    vproweb:
+        build:
+            context: ./DockerFiles/web
+        image: normandev/vprofileweb # <----- Change to your image repo or use my by. build: normandev/vprofiledb
+        container_name: vproweb
+        ports:
+          - "80:80"
+volumes:
+    vprodbdata: {}
+    vproappdata: {}
+      
